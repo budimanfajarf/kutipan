@@ -13,11 +13,39 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(App\User::class, function (Faker $faker) {
+// $factory->define(App\Models\User::class, function (Faker $faker) {
+//     return [
+//         'name' => $faker->name,
+//         'email' => $faker->unique()->safeEmail,
+//         'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+//         'remember_token' => str_random(10),
+//     ];
+// });
+
+
+
+
+// $factory->define(App\Models\Quote::class, function (Faker $faker) {
+//     $title = $faker->sentence;
+
+//     return [
+//         'title' => $title,
+//         'slug' => str_slug($title),
+//         'subject' => $faker->paragraph,
+//         'user_id' => $faker->numberBetween(1,15)
+//     ];
+// });
+
+
+
+$factory->define(App\Models\QuoteComment::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
-        'email' => $faker->unique()->safeEmail,
-        'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-        'remember_token' => str_random(10),
+        'subject' => $faker->sentence,
+        'user_id' => function() {
+            return factory('App\Models\User')->create();
+        },
+        'quote_id' => function() {
+            return factory('App\Models\Quote')->create();
+        }
     ];
 });
