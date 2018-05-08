@@ -71,6 +71,12 @@
   </div>
 
   <br>
+  <div class="row justify-content-center lead">
+    <!-- <div class="col-md-12 lead"> -->
+        {{ $quotes->appends(Request::input())->render() }}
+    <!-- </div> -->
+  </div>  
+  <br>
   <div class="row">
     <div class="col-md-12 lead">
       @foreach ($tags as $tag)

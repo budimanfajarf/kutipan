@@ -17,16 +17,17 @@ class QuoteController extends Controller
      */
     public function index(Request $request)
     {
-        // $quotes = Quote::All();
+        $search_q = $request->search;        
 
-        // $search_q = urlencode($request->search);
-        $search_q = $request->search;
-        // dd($search_q);
+        if(!empty($search_q)) {
+            // $quotes = Quote::with('tags','user')->where('title', 'like', '%'.$search_q.'%')->get();
+            $quotes = Quote::with(['tags','user'])->where('title', 'like', '%'.$search_q.'%')->paginate(5);        
+        }
+        else{
+            // $quotes = Quote::with('tags','user')->get();  
+            $quotes = Quote::with(['tags', 'user'])->paginate(5);
+        }
 
-        if(!empty($search_q))
-            $quotes = Quote::with('tags','user')->where('title', 'like', '%'.$search_q.'%')->get(); 
-        else
-            $quotes = Quote::with('tags','user')->get();  
             
         $tags = Tag::All();
 
@@ -137,8 +138,6 @@ class QuoteController extends Controller
             return redirect($red)->withInput($request->input())->with('tag_error', 'Tag minimal 1');        
         }
 
-        // dd($request->tags);
-
         $quote = Quote::findOrFail($id);
 
         if ($quote->isQuoteOwner()) {
@@ -185,14 +184,22 @@ class QuoteController extends Controller
     {
         $tags = Tag::All();
 
+        // $quotes = Quote::with('tags')->
+        //     whereHas(
+        //         'tags', 
+        //         function($query) use ($tag){
+        //             $query->where('name', $tag);
+        //         }
+        //     )->get();
+
         $quotes = Quote::with('tags')->
             whereHas(
                 'tags', 
                 function($query) use ($tag){
                     $query->where('name', $tag);
                 }
-            )->get();
-        
+            )->paginate(5);
+
         $search_q = $tag;
 
         return view('quotes.index', compact('quotes', 'tags', 'search_q'));
